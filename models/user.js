@@ -8,11 +8,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         unique: true,
       },
+      socketId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {}
   );
-  User.associate = function (models) {
-    // associations can be defined here
-  };
+
   return User;
 };
