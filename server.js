@@ -26,4 +26,10 @@ io.on("connection", (socket) => {
   socket.on("chat", (message) =>
     controllers.UserController.sendChat({ io, socket, message })
   );
+
+  socket.on("leave", () => controllers.UserController.disconnect({ socket }));
+
+  socket.on("disconnect", () =>
+    controllers.UserController.disconnect({ socket })
+  );
 });

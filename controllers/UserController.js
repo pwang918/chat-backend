@@ -72,6 +72,44 @@ class UserController {
       text: message,
     });
   }
+
+  /**
+   * Disconnect a user from a room
+   */
+  static async disconnect({ socket }) {
+    const user = await User.findOne({ where: { socketId: socket.id } });
+    if (!user) return;
+    const [room, roommember] = await Promise.all([
+      Room.findOne({ where: { userId: user.id } }),
+      RoomMember.findOne({
+        where: {
+          memberId: user.id,
+        },
+      }),
+    ]);
+    let roomId;
+    let disconnect = false;
+
+    if (room) {
+      roomId = room.id;
+      disconnect = true;
+      await room.destroy();
+    } else if (roommember) {
+      roomId = roommember.roomId;
+      await roommember.destroy();
+    }
+
+    if (roomId) {
+      socket.broadcast.to(roomId).emit("message", {
+        userId: user.id,
+        username: user.username,
+        room: "",
+        text: `${user.username} has left this room.`,
+        // When a room creator is disconnected, disconnect all the roommates fromt the room.
+        disconnect,
+      });
+    }
+  }
 }
 
 module.exports = UserController;
