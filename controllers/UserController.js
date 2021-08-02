@@ -1,4 +1,4 @@
-const { User, Room } = require("../models");
+const { User, Room, RoomMember } = require("../models");
 
 class UserController {
   /**
@@ -25,6 +25,8 @@ class UserController {
         // Create a new room by this user
         room = await Room.create({ name: roomname, userId: user.id });
       }
+      // Register as a new room member
+      await RoomMember.create({ roomId: room.id, memberId: user.id });
 
       socket.join(room.id);
       // Display welcome message
