@@ -24,8 +24,13 @@ module.exports = (sequelize, DataTypes) => {
   );
   RoomMember.associate = function (models) {
     RoomMember.belongsTo(models.Room, {
-      as: "createdBy",
-      foreignKey: "userId",
+      as: "room",
+      foreignKey: "roomId",
+      onDelete: "CASCADE",
+    });
+    RoomMember.belongsTo(models.User, {
+      as: "user",
+      foreignKey: "memberId",
       onDelete: "CASCADE",
     });
   };

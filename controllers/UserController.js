@@ -35,6 +35,8 @@ class UserController {
         username: user.username,
         text: `Welcome ${user.username}`,
         room: room.name,
+        private: true,
+        isRoomCreator: isRoomCreator,
       });
       // Notify a user is joined to a room if a user is not a room creator
       if (!isRoomCreator) {
@@ -53,12 +55,22 @@ class UserController {
   /**
    * Send a chat to roommates
    */
-  static async sendChat({ socket, message }) {
+  static async sendChat({ io, socket, message }) {
     const user = await User.findOne({ where: { socketId: socket.id } });
     if (!user) {
       console.error("No active user: ", socket.id);
       return;
     }
+    const activeRoom = await RoomMember.findOne({
+      where: { memberId: user.id },
+      include: "room",
+    });
+    io.to(activeRoom.room.id).emit("message", {
+      userId: user.id,
+      username: user.username,
+      room: activeRoom.room.name,
+      text: message,
+    });
   }
 }
 

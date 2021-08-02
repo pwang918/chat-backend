@@ -24,6 +24,6 @@ io.on("connection", (socket) => {
   );
 
   socket.on("chat", (message) =>
-    controllers.UserController.sendChat({ socket, message })
+    controllers.UserController.sendChat({ io, socket, message })
   );
 });
