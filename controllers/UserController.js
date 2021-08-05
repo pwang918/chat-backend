@@ -65,12 +65,14 @@ class UserController {
       where: { memberId: user.id },
       include: "room",
     });
-    io.to(activeRoom.room.id).emit("message", {
-      userId: user.id,
-      username: user.username,
-      room: activeRoom.room.name,
-      text: message,
-    });
+    if (activeRoom && activeRoom?.room?.id) {
+      io.to(activeRoom.room.id).emit("message", {
+        userId: user.id,
+        username: user.username,
+        room: activeRoom.room.name,
+        text: message,
+      });
+    }
   }
 
   /**

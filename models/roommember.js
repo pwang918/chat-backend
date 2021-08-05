@@ -20,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
     },
-    { paranoid: true }
   );
   RoomMember.associate = function (models) {
     RoomMember.belongsTo(models.Room, {

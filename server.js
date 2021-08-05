@@ -16,7 +16,15 @@ const server = app.listen(
   console.log(`Server is running on the port: ${port}`)
 );
 
-const io = socket(server);
+const io = socket(server, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    transports: ["websocket", "polling"],
+  },
+  allowEIO3: true,
+  perMessageDeflate: false
+});
 // Socket connection
 io.on("connection", (socket) => {
   socket.on("join", (data) =>
@@ -29,7 +37,7 @@ io.on("connection", (socket) => {
 
   socket.on("leave", () => controllers.UserController.disconnect({ socket }));
 
-  socket.on("disconnect", () =>
-    controllers.UserController.disconnect({ socket })
-  );
+  // socket.on("disconnect", () =>
+  //   controllers.UserController.disconnect({ socket })
+  // );
 });
